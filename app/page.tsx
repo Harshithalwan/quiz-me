@@ -3,6 +3,21 @@ import GenerateForm from "@/components/GenerateForm/GenerateForm";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const timer = (ms: number | undefined) =>
+  new Promise((res) => setTimeout(res, ms));
+
+async function poll(id: string) {
+  let ok = false, response;
+  while (!ok) {
+    await timer(3000);
+    try {
+      response = { ok } = await fetch(`/api/topic/${id}`);
+    } catch (e) {
+      console.debug("polling for topic...");
+    }
+  }
+  return response;
+}
 
 export default function Home() {
   const [error, setError] = useState(false);
@@ -13,6 +28,7 @@ export default function Home() {
   useEffect(() => {
     setTimeout(() => setError(false), 5000);
   }, [error]);
+
   const onGenerate = useCallback(
     async (topic: string, setLoading: (loading: boolean) => void) => {
       setLoading(true);
@@ -25,9 +41,10 @@ export default function Home() {
         body: JSON.stringify({ topic }),
       });
       if (!response.ok) setError(true);
-      const responseJson = await response.json();
+      const { id } = await response.json();
+      const pollr = await poll(id);
       setLoading(false);
-      push(`./topic/${responseJson.id}`);
+      push(`./topic/${id}`);
     },
     []
   );

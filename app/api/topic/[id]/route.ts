@@ -12,6 +12,8 @@ export const GET = async (
   if (!id || !isUUID(id))
     return Response.json({ message: "Invalid Request" }, { status: 400 });
   const topic = await fetchTopic(id);
+  if (!topic || topic.length == 0)
+    Response.json({ message: "Not found" }, { status: 404 });
   return Response.json(topic[0]);
 };
 

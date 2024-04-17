@@ -11,20 +11,23 @@ const Quiz = () => {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    const topicResponse = fetch(`/api/topic/${id}`);
-    const questionsResponse = fetch(`/api/questions/${id}`);
-
-    Promise.all([
-      topicResponse.then((response) => response.json()),
-      questionsResponse.then((response) => response.json()),
-    ])
-      .then(([topic, questions]) => {
-        setTopic(topic);
-        setQuestions(questions.questions);
+    fetch(`/api/topic/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
         setLoading(false);
+        setTopic(data);
       })
       .catch((e) => {
-        console.error("Error fetching data", e);
+        setLoading(false);
+        console.error("Error fetching topic data", e);
+      });
+    fetch(`/api/questions/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setQuestions(data.questions);
+      })
+      .catch((e) => {
+        console.error("Error fetching questions data", e);
       });
   }, []);
 

@@ -17,8 +17,12 @@ export const POST = async (request: NextRequest) => {
   if (!topic || topic == "") {
     return Response.json({ message: "Invalid request" }, { status: 403 });
   }
-
+  const topicId = randomUUID();
   // Google Generative AI
+  processRequest(topic, topicId);
+  return Response.json({ id: topicId });
+};
+const processRequest = async (topic: any, topicId: any) => {
   const prompt = `I'll be providing a topic name, and your job is to generate 5 multichoice questions, each with 4 plausible options and only one of the options will be correct. please use this JSON format for response [{ question: 'Text of the question', options: [{text: 'text of the option', correct: 'if this option is correct set this to 'true' otherwise set this to 'false''}] }] If provided topic is not valid or you're not able to generate a response in the provided structure then return "${ERROR_RESPONSE}"`;
   const payload = {
     contents: [
@@ -41,21 +45,19 @@ export const POST = async (request: NextRequest) => {
 
   // Can't get response in said JSON format, or provided subject is vague
   if (response == ERROR_RESPONSE) {
-    return Response.json({ message: ERROR_RESPONSE }, { status: 500 });
+    console.debug("Google messed up")
   }
   const json = parseJSON(response);
-  const topicId = await dbInsert(json, topic);
-  return Response.json({ id: topicId });
+  dbInsert(json, topic, topicId);
 };
 
-const dbInsert = async (json: any, topic: any) => {
+const dbInsert = async (json: any, topic: any, topicId: any) => {
   try {
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
     const user = supabase.auth.getUser();
-    const topicId = await createTopic(supabase, topic);
+    await createTopic(supabase, topic, topicId);
     await createQuestions(supabase, json, topicId);
-    return topicId;
   } catch (e) {
     console.debug("Error in db update");
     throw e;
@@ -85,10 +87,10 @@ async function createQuestions(supabase: any, json: any, topicId: any) {
 
 async function createTopic(
   supabase: SupabaseClient<any, "public", any>,
-  topic: any
+  topic: any,
+  topicId: any
 ): Promise<any> {
   try {
-    const topicId = randomUUID();
     const { data, error } = await supabase
       .from("topic")
       .insert({
