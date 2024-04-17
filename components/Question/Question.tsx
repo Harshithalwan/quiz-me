@@ -4,7 +4,7 @@ export type QuestionProp = {
   text: string;
   options: {
     text: string;
-    correct: string;
+    correct: string | boolean;
   }[];
 };
 
@@ -26,8 +26,8 @@ const Question = ({
       <ul className="flex flex-col gap-4">
         {question.options.map((option, index) => {
           // TODO - options.correct is sometimes binary and sometimes it's string, putting this temporary check
-          const isCorrect =
-            option.correct === "true" || option.correct === true;
+          const isCorrect = option.correct === "true" || option.correct === true;
+    
           console.log(option);
           let selectedStyle;
           if (selected == index && !submitted)
