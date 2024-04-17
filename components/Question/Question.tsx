@@ -25,13 +25,14 @@ const Question = ({
       </div>
       <ul className="flex flex-col gap-4">
         {question.options.map((option, index) => {
-          const isCorrect = option.correct == 'true';
+          // TODO - options.correct is sometimes binary and sometimes it's string, putting this temporary check
+          const isCorrect = option.correct == "true" || option.correct;
           let selectedStyle;
           if (selected == index && !submitted)
             selectedStyle = "shadow-none animate-bounce";
           let answerStyle;
-          if(submitted && isCorrect) {
-            answerStyle = "border-green-500"
+          if (submitted && isCorrect) {
+            answerStyle = "border-green-500";
           }
           if (submitted && isCorrect && selected == index)
             answerStyle = "bg-green-600";
