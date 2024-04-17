@@ -50,7 +50,7 @@ const GenerateForm = ({ onGenerate }: any) => {
           )}
         </button>
       </div>
-      {loading ? <div className="animate-pulse">Please bear with me. It takes time to create quizzes...</div> : null}
+      {loading ? <div className="animate-pulse">New questions are hatching. Meanwhile checkout existing quizzes from the section below</div> : null}
     </div>
   );
 };
