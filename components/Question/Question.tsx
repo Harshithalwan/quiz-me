@@ -26,7 +26,9 @@ const Question = ({
       <ul className="flex flex-col gap-4">
         {question.options.map((option, index) => {
           // TODO - options.correct is sometimes binary and sometimes it's string, putting this temporary check
-          const isCorrect = option.correct == "true" || option.correct;
+          const isCorrect =
+            option.correct === "true" || option.correct === true;
+          console.log(option);
           let selectedStyle;
           if (selected == index && !submitted)
             selectedStyle = "shadow-none animate-bounce";
