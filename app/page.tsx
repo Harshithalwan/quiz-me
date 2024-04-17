@@ -35,7 +35,7 @@ export default function Home() {
     fetch("/api/topic")
       .then((response) => response.json())
       .then((data) => setRecent(data));
-  });
+  }, []);
 
   const onGenerate = useCallback(
     async (topic: string, setLoading: (loading: boolean) => void) => {
