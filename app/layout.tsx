@@ -16,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col items-center p-24 gap-8">{children}</body>
+      <body className="flex min-h-screen flex-col items-center py-24 px-8 gap-8">
+        <div className="max-w-5xl">{children}</div>
+      </body>
     </html>
   );
 }
