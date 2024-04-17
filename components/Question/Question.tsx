@@ -25,17 +25,17 @@ const Question = ({
       </div>
       <ul className="flex flex-col gap-4">
         {question.options.map((option, index) => {
-          const isCorrect = option.correct;
+          const isCorrect = option.correct == 'true';
           let selectedStyle;
           if (selected == index && !submitted)
             selectedStyle = "shadow-none animate-bounce";
           let answerStyle;
+          if(submitted && isCorrect) {
+            answerStyle = "border-green-500"
+          }
           if (submitted && isCorrect && selected == index)
             answerStyle = "bg-green-600";
-          if(submitted && isCorrect) {
-            answerStyle += " border-green-500"
-          }
-          if (submitted && !isCorrect && selected == index)
+          else if (submitted && !isCorrect && selected == index)
             answerStyle = "bg-red-600";
           let pendingStyle;
           if (!submitted) pendingStyle = "shadow-white";
