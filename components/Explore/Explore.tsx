@@ -8,7 +8,7 @@ const Explore = ({ recent }: ExploreProps) => {
       <h1 className="text-2xl font-bold py-4">Recent Quiz</h1>
       {recent.map((topic) => {
         return (
-          <a className="link" href={`/topic/${topic.id}`}>
+          <a key={topic.id} className="link" href={`/topic/${topic.id}`}>
             {topic.name}
           </a>
         );
