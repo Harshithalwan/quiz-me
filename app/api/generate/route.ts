@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { FunctionCallingMode, GoogleGenerativeAI } from "@google/generative-ai";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
@@ -22,8 +22,11 @@ export const POST = async (request: NextRequest) => {
   processRequest(topic, topicId);
   return Response.json({ id: topicId });
 };
+
+
+
 const processRequest = async (topic: any, topicId: any) => {
-  const prompt = `I'll be providing a topic name, and your job is to generate 5 multichoice questions, each with 4 plausible options and only one of the options will be correct. please use this JSON format for response [{ question: 'Text of the question', options: [{text: 'text of the option', correct: 'if this option is correct set this to 'true' otherwise set this to 'false''}] }] If provided topic is not valid or you're not able to generate a response in the provided structure then return "${ERROR_RESPONSE}"`;
+  const prompt = `I'll be providing a topic name, and your job is to generate 5 multichoice questions, each with 4 plausible options and only one of the options will be correct. please use this JSON format for response [{ question: 'Text of the question', options: [{text: 'text of the option', correct: 'this is a boolean value, if this option is correct set this to true otherwise set this to false'}] }] If provided topic is not valid or you're not able to generate a response in the provided structure then return "${ERROR_RESPONSE}"`;
   const payload = {
     contents: [
       {
@@ -40,12 +43,13 @@ const processRequest = async (topic: any, topicId: any) => {
       ],
     },
   };
+  
   const result = await client.generateContent(payload);
   const response = result.response.text();
 
   // Can't get response in said JSON format, or provided subject is vague
   if (response == ERROR_RESPONSE) {
-    console.debug("Google messed up")
+    console.debug("Google messed up");
   }
   const json = parseJSON(response);
   dbInsert(json, topic, topicId);
